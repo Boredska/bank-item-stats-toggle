@@ -7,6 +7,9 @@ import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.WidgetClosed;
+import net.runelite.api.events.WidgetLoaded;
+import net.runelite.api.widgets.WidgetID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
@@ -24,6 +27,9 @@ public class BankItemStatsTogglePlugin extends Plugin
 	@Inject
 	private BankItemStatsToggleConfig config;
 
+	@Inject
+	private ConfigManager configManager;
+
 	@Override
 	protected void startUp() throws Exception
 	{
@@ -36,12 +42,32 @@ public class BankItemStatsTogglePlugin extends Plugin
 		log.info("Bank Item Stats Toggle stopped!");
 	}
 
-	@Subscribe
-	public void onGameStateChanged(GameStateChanged gameStateChanged)
-	{
-		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
+	@Subscribe void onWidgetLoaded(WidgetLoaded event){
+		if (event.getGroupId() == WidgetID.BANK_GROUP_ID)
 		{
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Bank Item Stats Toggle says " + config.greeting(), null);
+			if (config.equipmentStats())
+			{
+				configManager.setConfiguration("itemstat","equipmentStats",true);
+			}
+
+			if (config.consumableStats())
+			{
+				configManager.setConfiguration("itemstat","consumableStats",true);
+			}
+		}
+	}
+
+	@Subscribe void onWidgetClosed(WidgetClosed event){
+		if(event.getGroupId() == WidgetID.BANK_GROUP_ID){
+			if (config.equipmentStats())
+			{
+				configManager.setConfiguration("itemstat","equipmentStats",false);
+			}
+
+			if (config.consumableStats())
+			{
+				configManager.setConfiguration("itemstat","consumableStats",false);
+			}
 		}
 	}
 

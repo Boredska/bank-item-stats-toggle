@@ -8,12 +8,22 @@ import net.runelite.client.config.ConfigItem;
 public interface BankItemStatsToggleConfig extends Config
 {
 	@ConfigItem(
-		keyName = "greeting",
-		name = "Welcome Greeting",
-		description = "The message to show to the user when they login"
+			keyName = "consumableStats",
+			name = "Toggle consumable stats",
+			description = "Toggles tooltips for consumable items (food, boosts)"
 	)
-	default String greeting()
+	default boolean consumableStats()
 	{
-		return "Hello";
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "equipmentStats",
+			name = "Toggle equipment stats",
+			description = "Toggles tooltips for equipment items (combat bonuses, weight, prayer bonuses)"
+	)
+	default boolean equipmentStats()
+	{
+		return true;
 	}
 }
